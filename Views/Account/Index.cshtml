@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNet.Identity
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    Welcome to Index!
+    @if (Request.IsAuthenticated)
+    {
+        <p>Hello @User.Identity.GetUserName() !</p>
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post))
+        {
+            <input type="submit" class="btn btn-default" value="Log out" />
+        }
+    }
+    else
+    {
+        <p>@Html.ActionLink("Register", "Register")</p>
+        <p>@Html.ActionLink("Log in", "Login")</p>
+    }
+</body>
+</html>

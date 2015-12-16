@@ -32,7 +32,7 @@ namespace AuthenticationApp03.Controllers
                 var authenticationManager = HttpContext.GetOwinContext().Authentication;
                 var userIdentity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                 authenticationManager.SignIn(new Microsoft.Owin.Security.AuthenticationProperties() { }, userIdentity);
-                return RedirectToAction("Login");
+                return RedirectToAction("Index");
             }
             else
             {
@@ -42,6 +42,35 @@ namespace AuthenticationApp03.Controllers
         public ActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginViewModel model)
+        {
+            var userStore = new UserStore<IdentityUser>();
+            var userManager = new UserManager<IdentityUser>(userStore);
+            var user = userManager.Find(model.Email, model.Password);
+
+            if (user != null)
+            {
+                var authenticationManager = HttpContext.GetOwinContext().Authentication;
+                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+
+                authenticationManager.SignIn(new Microsoft.Owin.Security.AuthenticationProperties() { IsPersistent = false }, userIdentity);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult LogOff()
+        {
+            var authenticationManager = HttpContext.GetOwinContext().Authentication;
+            authenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Index");
         }
     }
 }
